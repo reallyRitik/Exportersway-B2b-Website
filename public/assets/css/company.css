@@ -1,0 +1,43 @@
+
+@font-face {
+    font-family: 'Delicious Handrawn';
+    src: asset('css/style.css') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.marquee {
+    width: 100;
+    overflow: hidden;
+}
+
+.marquee-content {
+    display: flex;
+    list-style: none;
+    animation: scrolling 20s linear infinite;
+    gap: 9px;
+}
+
+
+
+.suppliers_head{
+    font-size: 30px !important;
+    font-family: 'Delicious Handrawn'!important;
+}
+
+.marquee-item {
+    height: 150px;
+    width: 200px;
+    flex-shrink: 0;
+}
+
+.marquee-image {
+    height: 100%;
+    width: 100%;
+    white-space: nowrap;
+}
+
+@keyframes scrolling {
+    0% { transform: translateX(0); }
+    100% { transform: translatex(-2000px); }
+}

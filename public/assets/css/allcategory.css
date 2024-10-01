@@ -1,0 +1,46 @@
+*{
+    font-family: math;
+}
+.category{
+    background-color: aqua;
+}
+
+.main-heading{
+    margin-top: 15px;
+    font-size: 24px;
+    font-weight: 600;
+    color: #344e69;
+    padding: 0px 15px 0px;
+    margin-bottom: 15px;
+}
+.link_box {
+    padding: 10px;
+    display: inline;
+    position: relative;
+    min-height: 45px;
+}
+.link_box a {
+    color: #414141;
+    display: block;
+    text-decoration: none;
+}
+    .ind_box img {
+        vertical-align: middle;
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+    }
+    .ind_box span{
+        display: inline-block;
+    vertical-align: middle;
+    width: calc(100% - 50px);
+    }
+    .maincategory{
+        max-width:100%;
+        padding: 21px 25px 0px;
+        background-color: #fff;
+        margin-bottom: 20px;
+    }
+    a {
+        text-decoration: none;
+    }

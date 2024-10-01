@@ -1,0 +1,39 @@
+
+@media screen and (min-width: 700px) {
+	.large-group {
+		display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+	}
+	
+	.small-group {
+		width: 45%;
+	}
+    .btn{
+        background-color: #7070ec;
+    color: white;
+    width: 112px;
+    margin-left: 42%;
+    margin-top: 3%;
+    border-radius: 10%;
+    }
+}
+
+label {
+	display: block;
+	margin-bottom: 5px;
+}
+
+input, select,textarea  {
+	padding: 10px 16px;
+	width: 100%;
+	outline: 0;
+	margin-bottom: 20px;
+	border-radius: 20px;
+	border: 0;
+	background-color: #ededed;
+	font-size: 14px;
+	-webkit-appearance:none;
+	-moz-appearance:none;
+	appearance:none;
+}
