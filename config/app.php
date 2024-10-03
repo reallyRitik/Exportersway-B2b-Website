@@ -68,7 +68,7 @@ return [
     */
 
 
-    'timezone' => config('app.timezone', 'UTC'),
+    'timezone' => config('app.timezone', 'Asia/Kolkata'),
 
     /*
     |--------------------------------------------------------------------------

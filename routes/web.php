@@ -313,6 +313,7 @@ Route::get('/viewcontact/{id}', [SearchviewController::class, 'viewcontact'])->n
 Route::get('/seachdatacustomer', [ListcustomerController::class, 'seachdatacustomer'])->name('seachdatacustomer');
 
 Route::get('/showlead', [LeadlistController::class, 'showlead']);
+
 Route::get('/search-lead', [LeadlistController::class, 'searchLead'])->name('searchLead');
 Route::get('/appraeldata', [AppraeltrandingController::class, 'apprael']);
 Route::get('/editpaidmembership/{id}', [ListcustomerController::class, 'editpaidcustomer'])->name('editpaidmembership');
@@ -343,6 +344,10 @@ Route::get('faq', function () {
 });  
 Route::get('product-policy', function () {
     return view('product-policy');
-});  
+}); 
+
+Route::get('/addtofav/{lead_id}', [LeadlistController::class, 'favenquiryadd'])
+    ->name('addtofav')
+    ->middleware('auth'); // Ensures the user is authenticated
 
 Route::post('/decrement-points', [LeadlistController::class, 'decrementPoints'])->name("decrement.points");

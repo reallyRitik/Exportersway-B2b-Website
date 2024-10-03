@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Leadlist;
 use App\Models\Mail;
+use App\Models\Favenquiry;
+use Illuminate\Support\Facades\Auth;
 
 
 class LeadlistController extends Controller
@@ -223,4 +225,38 @@ public function decrementPoints(Request $request)
 
     return response()->json(['points' => $customer->points]);
 }
+
+public function favenquiryadd($lead_id)
+{
+    $user_id = Auth::id(); // Get the logged-in user's ID
+
+    // Check if a record for this user exists
+    $favenquiry = Favenquiry::where('user_id', $user_id)->first();
+
+    if ($favenquiry) {
+        // Ensure that lead_ids is always an array
+        $leadIds = $favenquiry->lead_ids ?? []; // Default to an empty array if null
+
+        if (!in_array($lead_id, $leadIds)) {
+            // Add the new lead_id to the array
+            $leadIds[] = $lead_id;
+            $favenquiry->lead_ids = $leadIds;
+            $favenquiry->save();
+
+            return redirect()->back()->with('success', 'Lead added to your favorites!');
+        }
+
+        return redirect()->back()->with('message', 'This lead is already in your favorites.');
+    } else {
+        // If no record exists for this user, create one with the lead_id
+        Favenquiry::create([
+            'user_id' => $user_id,
+            'lead_ids' => [$lead_id], // Store the lead_id as an array
+        ]);
+
+        return redirect()->back()->with('success', 'Lead added to your favorites!');
+    }
+}
+
+
 }
