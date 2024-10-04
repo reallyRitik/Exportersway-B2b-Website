@@ -225,7 +225,6 @@ public function decrementPoints(Request $request)
 
     return response()->json(['points' => $customer->points]);
 }
-
 public function favenquiryadd($lead_id)
 {
     $user_id = Auth::id(); // Get the logged-in user's ID
@@ -243,10 +242,10 @@ public function favenquiryadd($lead_id)
             $favenquiry->lead_ids = $leadIds;
             $favenquiry->save();
 
-            return redirect()->back()->with('success', 'Lead added to your favorites!');
+            return redirect()->back()->with('status', 'added'); // Status for success
         }
 
-        return redirect()->back()->with('message', 'This lead is already in your favorites.');
+        return redirect()->back()->with('status', 'already_saved'); // Status for already saved
     } else {
         // If no record exists for this user, create one with the lead_id
         Favenquiry::create([
@@ -254,9 +253,10 @@ public function favenquiryadd($lead_id)
             'lead_ids' => [$lead_id], // Store the lead_id as an array
         ]);
 
-        return redirect()->back()->with('success', 'Lead added to your favorites!');
+        return redirect()->back()->with('status', 'added'); // Status for success
     }
 }
+
 
 
 }

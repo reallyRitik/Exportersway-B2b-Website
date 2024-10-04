@@ -226,14 +226,13 @@
                                     <div class="bo-list-right">
                                         <div class="quote-btn">
                                             <div class="showbuttonenquiry" style="    display: ruby-text;">
-
-
-                                                <a class=" btn btn-theme" title="Contact Buyer" data-toggle="modal" data-target="#myModal">Contact Buyer</a>
-                                                @if(Auth::check()) <!-- Check if user is logged in -->
-                                        <a title="Add to fav" href="{{ route('addtofav', ['lead_id' => $row->id]) }}" class="btn btn-outline-danger">
-                                            <i class="fa-solid fa-heart"></i> Add to fav
-                                        </a>
-                                    @endif
+                                                <a title="Contact Buyer" data-toggle="modal" data-target="#myModal"><i class="fa fa-envelope" aria-hidden="true"></i>&nbsp; Inquire Now
+                                                </a>
+                                                &nbsp; &nbsp; @if(Auth::check()) <!-- Check if user is logged in -->
+                                                <a href="{{ route('addtofav', ['lead_id' => $row->id]) }}" id="addToFav{{$row->id}}">
+                                                    <i class="fa-solid fa-heart"></i> Add to favorite
+                                                </a>
+                                                @endif
                                             </div>
                                             <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                                                 <div class="modal-dialog" role="document">
@@ -327,6 +326,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    
                                                     <style>
                                                         .wt-signupwgg {
                                                             background: #fff;
@@ -390,6 +390,7 @@
                 </div>
                 @endif
                 @endforeach
+              
                 <div class="d-flex justify-content-center">
                     {{ $showlead->links('pagination::simple-bootstrap-4') }}
                 </div>
@@ -854,7 +855,22 @@
             });
         }
     </script>
-
+<script>
+    // Show alert based on session status
+    @if (session('status') == 'added')
+        alert('Product saved to favorites!'); // Display success message
+        // Use confirm to show buttons (Go to Favorites and OK)
+        if (confirm("Go to favorites?")) { 
+            window.location.href = "{{ url('showlead') }}"; // Redirect to the favorites page
+        }
+    @elseif (session('status') == 'already_saved')
+        alert('Product already saved in favorites!'); // Display already saved message
+        // Use confirm to show buttons (Go to Favorites and OK)
+        if (confirm("Go to favorites?")) {
+            window.location.href = "{{ url('showlead') }}"; // Redirect to the favorites page
+        }
+    @endif
+</script>
     <script data-require="jquery@*" data-semver="2.2.0" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <script data-require="bootstrap@*" data-semver="3.3.6" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
