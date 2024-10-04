@@ -326,8 +326,31 @@
                                                             </div>
                                                         </div>
                                                     </div>
+
                                                     
-                                                    <style>
+                                                    <!-- modal -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
+                @endforeach
+
+                <div class="d-flex justify-content-center">
+                    {{ $showlead->links('pagination::simple-bootstrap-4') }}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <style>
                                                         .wt-signupwgg {
                                                             background: #fff;
                                                             border-radius: 15px;
@@ -377,29 +400,6 @@
                                                             });
                                                         });
                                                     </script>
-                                                    <!-- modal -->
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @endif
-                @endforeach
-              
-                <div class="d-flex justify-content-center">
-                    {{ $showlead->links('pagination::simple-bootstrap-4') }}
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-
     <style>
         .intpro:hover {
             color: #C77F60;
@@ -855,22 +855,22 @@
             });
         }
     </script>
-<script>
-    // Show alert based on session status
-    @if (session('status') == 'added')
+    <script>
+        // Show alert based on session status
+        @if(session('status') == 'added')
         alert('Product saved to favorites!'); // Display success message
         // Use confirm to show buttons (Go to Favorites and OK)
-        if (confirm("Go to favorites?")) { 
-            window.location.href = "{{ url('showlead') }}"; // Redirect to the favorites page
+        if (confirm("Go to favorites?")) {
+            window.location.href = "{{ url('addtofavorite') }}"; // Redirect to the favorites page
         }
-    @elseif (session('status') == 'already_saved')
+        @elseif(session('status') == 'already_saved')
         alert('Product already saved in favorites!'); // Display already saved message
         // Use confirm to show buttons (Go to Favorites and OK)
         if (confirm("Go to favorites?")) {
-            window.location.href = "{{ url('showlead') }}"; // Redirect to the favorites page
+            window.location.href = "{{ url('addtofavorite') }}"; // Redirect to the favorites page
         }
-    @endif
-</script>
+        @endif
+    </script>
     <script data-require="jquery@*" data-semver="2.2.0" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <script data-require="bootstrap@*" data-semver="3.3.6" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>

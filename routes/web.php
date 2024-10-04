@@ -342,9 +342,8 @@ Route::get('renewmembership', function () {
 Route::get('faq', function () {
     return view('faq');
 });  
-Route::get('addtofav', function () {
-    return view('addtofav');
-});  
+Route::get('/addtofavorite', [LeadlistController::class, 'showFavorites'])->name('favorites')->middleware('auth');
+
 Route::get('product-policy', function () {
     return view('product-policy');
 }); 

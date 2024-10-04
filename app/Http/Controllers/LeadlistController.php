@@ -256,6 +256,26 @@ public function favenquiryadd($lead_id)
         return redirect()->back()->with('status', 'added'); // Status for success
     }
 }
+public function showFavorites()
+{
+    $user_id = Auth::id(); // Get the logged-in user's ID
+
+    // Fetch the user's favorite enquiries
+    $favenquiry = Favenquiry::where('user_id', $user_id)->first();
+
+    // Check if the user has any favorite enquiries
+    if ($favenquiry) {
+        $lead_ids = $favenquiry->lead_ids; // Get the array of lead IDs
+
+        // Fetch the leads corresponding to the lead IDs
+        $favoriteLeads = Leadlist::whereIn('id', $lead_ids)->get(); // Assuming 'Lead' is your model for enquiries
+    } else {
+        $favoriteLeads = []; // No favorite enquiries found
+    }
+
+    // Pass the favorite leads to the view
+    return view('addtofav', compact('favoriteLeads'));
+}
 
 
 
