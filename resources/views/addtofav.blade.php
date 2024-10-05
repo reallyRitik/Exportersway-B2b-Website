@@ -29,18 +29,28 @@
     <div class="container-fluid">
 
         <div class="row" style="width:100%">
-       
+
             <div class="col-md-9 col-sm-12">
-           
+
                 <div class="row">
                     <div class="col-12 col-lg-7 col-md-7">
                         <h3>Your Favorite Items</h3>
                     </div>
                     <div class="col-12 col-lg-4 col-md-4" style="margin-top: 2%;">
-                    <label><input type='checkbox' id='check-all' value='selectall'> Select All</label>&nbsp;&nbsp;&nbsp;
-                    <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Delete All
+                    <label><input type='checkbox' id='check-all'> Select All</label>&nbsp;&nbsp;&nbsp;
+
+<!-- Delete All button with form -->
+<a href="javascript:void(0)" title="Delete All" onclick="confirmDeleteAll()" style="color: #000000;">
+    <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Delete All
+</a>
+
+<!-- Hidden form for deleting all selected inquiries -->
+<form id="delete-selected-form" action="{{ route('remove_multiple_from_favorites') }}" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
                     </div>
-                    
+
                 </div>
                 @if(count($favoriteLeads) > 0)
                 @foreach($favoriteLeads as $lead)
@@ -51,7 +61,7 @@
                                 <div class="related-bo-list">
                                     <div class="bo-list-left">
                                         <h3>
-                                            <a href="" class="intpro"> {{$lead->title}}</a>
+                                            <a href="{{ route('leaddetails', ['id' => $lead->id]) }}" class="intpro"> {{$lead->title}}</a>
                                         </h3>
                                         <div class="bo-flag" style="margin-bottom:5px;">
                                             <div class="span-quantity">
@@ -67,12 +77,13 @@
                                             </span>
                                         </div>
                                         <p class="bdesc">
-                                        {{$lead->message}} </p>
+                                            {{$lead->message}}
+                                        </p>
                                         <div class="verification-wrapper">
                                             <div class="verification-name-wrapper">
 
-                                            <span>{{ substr($lead->name, 0, 1) }}</span>
-                                            <strong>{{$lead->name}}</strong>
+                                                <span>{{ substr($lead->name, 0, 1) }}</span>
+                                                <strong>{{$lead->name}}</strong>
                                             </div>
                                             <div class="verification-email-wrapper">
                                                 <h4 style="font-size: 14px;">
@@ -91,12 +102,21 @@
                                         <div class="quote-btn" style="align-items: baseline;
     display: flex;
     flex-direction: row-reverse;">
-                                            <div class="showbuttonenquiry" style="    display: ruby-text;">
-                                                <a title="Contact Buyer" data-toggle="modal" data-target="#myModal"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Remove
+                                            <div class="showbuttonenquiry" style="display: ruby-text;">
+                                                <a title="Remove" href="javascript:void(0)" style="color: #000000;"
+                                                    onclick="event.preventDefault(); confirmDeletion({{ $lead->id }});">
+                                                    <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Remove
                                                 </a>
-                                                <a title="Contact Buyer" data-toggle="modal" data-target="#myModal"><label><input type='checkbox' id='check-all' value='selectall'> 
-                                                Select Inquiry</label>
-                                                </a>
+                                                <form id="delete-form-{{ $lead->id }}" action="{{ route('remove_from_favorites', ['lead_id' => $lead->id]) }}" method="POST" style="display: none;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                </form>
+
+                                                <label>
+                                                    <input type="checkbox" class="inquiry-checkbox" name="lead_ids[]" value="{{ $lead->id }}">
+                                                    Select Inquiry
+                                                </label>
+
 
                                             </div>
                                         </div>
@@ -109,13 +129,16 @@
                 </div>
 
                 @endforeach
-    @else
-        <p>You haven't added any enquiries to your favorites yet.</p>
-    @endif
-          
+                @else
+                <p>You haven't added any enquiries to your favorites yet.</p>
+                @endif
+
 
             </div>
-             <div class="col-md-3 col-sm-12 col-12 col-lg-3 signup__container sform ">
+
+
+
+            <div class="col-md-3 col-sm-12 col-12 col-lg-3 signup__container sform ">
                 <div class="home-signup-cont wt-signupw">
                     <div class="row" style="width: 100%;">
                         <div class="col-12">
@@ -129,10 +152,10 @@
                     <div class="row" style="width: 100%;">
                         <div class="reg-form form-container">
                             <form mathod="" action="">
-                            <div class="col-12 col-xs-12 padr4">
+                                <div class="col-12 col-xs-12 padr4">
                                     <div class="form-group">
                                         <textarea class="form-control" rows="6" cols="7">Message</textarea>
-                                    <!-- <input class="form-control" placeholder="Massage* " required name="massage" type="text"> -->
+                                        <!-- <input class="form-control" placeholder="Massage* " required name="massage" type="text"> -->
                                     </div>
                                 </div>
                                 <div class="col-12 col-xs-12 padr4">
@@ -150,7 +173,7 @@
                                         <input class="form-control" placeholder="Email* " required name="email" type="text">
                                     </div>
                                 </div>
-                                
+
                                 <div class="col-xs-12">
                                     <div class="boltop-btn-cont text-center mt10">
                                         <button type="submit" class="btn boltop-btn btn-submit">Submit
@@ -169,8 +192,37 @@
         </div>
 
     </div>
+    <script>
+    // Select All functionality
+    document.getElementById('check-all').addEventListener('change', function() {
+        var checkboxes = document.querySelectorAll('.inquiry-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
+        });
+    });
 
+    // Confirm deletion of selected inquiries (Delete All)
+    function confirmDeleteAll() {
+        var selectedInquiries = document.querySelectorAll('.inquiry-checkbox:checked');
+        
+        if (selectedInquiries.length > 0) {
+            if (confirm('Are you sure you want to delete the selected inquiries?')) {
+                // Submit the form to delete selected inquiries
+                document.getElementById('delete-selected-form').submit();
+            }
+        } else {
+            alert('Please select at least one inquiry to delete.');
+        }
+    }
 
+    // Confirm deletion for individual inquiry
+    function confirmDeletion(lead_id) {
+        if (confirm('Are you sure you want to remove this lead from your favorites?')) {
+            // Submit the hidden form if user confirms
+            document.getElementById('delete-form-' + lead_id).submit();
+        }
+    }
+    </script>
     <style>
         .intpro:hover {
             color: #C77F60;
@@ -393,7 +445,7 @@
             text-align: center;
         }
 
-     
+
         .home-signup-cont {
             background: #fff;
             box-shadow: 0 0 10px #cccccc94;

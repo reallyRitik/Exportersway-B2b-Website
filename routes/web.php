@@ -343,6 +343,10 @@ Route::get('faq', function () {
     return view('faq');
 });  
 Route::get('/addtofavorite', [LeadlistController::class, 'showFavorites'])->name('favorites')->middleware('auth');
+// Route to remove a lead from favorites
+Route::delete('/favorites/remove/{lead_id}', [LeadlistController::class, 'removeFromFavorites'])->name('remove_from_favorites')->middleware('auth');
+Route::delete('/favorites/remove-multiple', [LeadlistController::class, 'removeMultipleFromFavorites'])->name('remove_multiple_from_favorites')->middleware('auth');
+
 
 Route::get('product-policy', function () {
     return view('product-policy');

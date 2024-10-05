@@ -277,6 +277,59 @@ public function showFavorites()
     return view('addtofav', compact('favoriteLeads'));
 }
 
+public function removeFromFavorites($lead_id)
+{
+    $user_id = Auth::id(); // Get the logged-in user's ID
+
+    // Find the user's favorite enquiry entry
+    $favenquiry = Favenquiry::where('user_id', $user_id)->first();
+
+    if ($favenquiry) {
+        $leadIds = $favenquiry->lead_ids; // Get the array of lead IDs
+
+        // Check if the lead ID exists in the array
+        if (in_array($lead_id, $leadIds)) {
+            // Remove the lead ID from the array
+            $leadIds = array_diff($leadIds, [$lead_id]);
+
+            // Update the 'lead_ids' field
+            $favenquiry->lead_ids = array_values($leadIds); // Re-index the array
+            $favenquiry->save();
+
+            return redirect()->back()->with('success', 'Lead removed from your favorites!');
+        }
+
+        return redirect()->back()->with('error', 'Lead not found in your favorites.');
+    }
+
+    return redirect()->back()->with('error', 'You have no favorite enquiries.');
+}
+
+public function removeMultipleFromFavorites(Request $request)
+{
+    $user_id = Auth::id(); // Get the logged-in user's ID
+    $leadIdsToDelete = $request->input('lead_ids', []); // Get the selected lead IDs
+
+    if (!empty($leadIdsToDelete)) {
+        // Find the user's favorite enquiry entry
+        $favenquiry = Favenquiry::where('user_id', $user_id)->first();
+
+        if ($favenquiry) {
+            $leadIds = $favenquiry->lead_ids;
+
+            // Remove the selected lead IDs from the user's favorites
+            $leadIds = array_diff($leadIds, $leadIdsToDelete);
+
+            // Update the 'lead_ids' field
+            $favenquiry->lead_ids = array_values($leadIds); // Re-index the array
+            $favenquiry->save();
+
+            return redirect()->back()->with('success', 'Selected inquiries removed from your favorites!');
+        }
+    }
+
+    return redirect()->back()->with('error', 'No inquiries selected or found.');
+}
 
 
 }
