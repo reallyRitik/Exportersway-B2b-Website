@@ -66,6 +66,9 @@ Route::get('/updatemembership/{id}', [ListcustomerController::class, 'editmember
 Route::post('/submitupdatemembership/{id}', [ListcustomerController::class, 'updatemembership']);
 
 
+Route::get('/catlogenquiryshow', [CustomerController::class, 'showEnquiries']);
+
+
 
 Route::get('agritranding', [AgritrandingController::class, 'index'])->name('agri_tranding');
 Route::post('/submitagritranding', [AgritrandingController::class, 'adddagritranding']);
@@ -348,6 +351,7 @@ Route::delete('/favorites/remove/{lead_id}', [LeadlistController::class, 'remove
 Route::delete('/favorites/remove-multiple', [LeadlistController::class, 'removeMultipleFromFavorites'])->name('remove_multiple_from_favorites')->middleware('auth');
 
 
+
 Route::get('product-policy', function () {
     return view('product-policy');
 }); 
@@ -356,4 +360,5 @@ Route::get('/addtofav/{lead_id}', [LeadlistController::class, 'favenquiryadd'])
     ->name('addtofav')
     ->middleware('auth'); // Ensures the user is authenticated
 
+    Route::post('/submit-Enquiry', [CustomerController::class, 'sendenquiry'])->name('submit.Enquiry');
 Route::post('/decrement-points', [LeadlistController::class, 'decrementPoints'])->name("decrement.points");

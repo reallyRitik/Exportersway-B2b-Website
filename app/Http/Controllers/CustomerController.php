@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Listcustomer;
 use App\Models\User;
+use App\Models\Enquiry;
 use Illuminate\Support\Facades\Storage;
 
 use Illuminate\Support\Facades\Mail;
@@ -25,12 +26,7 @@ class CustomerController extends Controller
     public function importantdata(){
         return view('customer.addimportantdata');
     }
-    // public function profile(){
-    //     $userId = auth()->user()->id;
-    // $profile = Listcustomer::where('user_id', $userId)->firstOrFail();
-    //     return view('customer.profile',compact('profile'));
-    // }
-    
+   
     public function profile() {
     $userId = auth()->user()->id;
     $profile = Listcustomer::where('user_id', $userId)->first();
@@ -294,5 +290,38 @@ if ($user) {
 }
 }
 
+
+
+public function sendenquiry(Request $request)
+{
+    // Validate the incoming request data
+    $request->validate([
+        'fname' => 'required|string|max:255',
+        'email' => 'required|email',
+        'phone' => 'required|numeric',
+        'message' => 'required|string',
+    ]);
+
+    // Store the form data in the database
+    Enquiry::create([
+        'fname' => $request->fname,
+        'email' => $request->email,
+        'phone' => $request->phone,
+        'companyname' => $request->companyname,
+        'message' => $request->message,  // Make sure 'message' matches form field
+    ]);
+
+    // Redirect or return response
+    return back()->with('success', 'Enquiry submitted successfully!');
+}
+
+public function showEnquiries()
+{
+    // Fetch all enquiries from the database
+    $enquiries = Enquiry::all();
+
+    // Return a view and pass the data
+    return view('admin.catlog_enquiries', compact('enquiries'));
+}
     
 }

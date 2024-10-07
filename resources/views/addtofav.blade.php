@@ -48,6 +48,7 @@
 <form id="delete-selected-form" action="{{ route('remove_multiple_from_favorites') }}" method="POST" style="display: none;">
     @csrf
     @method('DELETE')
+    <input type="hidden" id="lead-ids-input" name="lead_ids[]">
 </form>
                     </div>
 
@@ -152,7 +153,7 @@
                     <div class="row" style="width: 100%;">
                         <div class="reg-form form-container">
                             <form mathod="" action="">
-                                <div class="col-12 col-xs-12 padr4">
+                                <div class="col-12 col-xs-12 ">
                                     <div class="form-group">
                                         <textarea class="form-control" rows="6" cols="7">Message</textarea>
                                         <!-- <input class="form-control" placeholder="Massage* " required name="massage" type="text"> -->
@@ -161,6 +162,11 @@
                                 <div class="col-12 col-xs-12 padr4">
                                     <div class="form-group">
                                         <input class="form-control" placeholder="Full Name* " required name="name" type="text">
+                                    </div>
+                                </div>
+                                <div class="col-12 col-xs-12 padr4">
+                                    <div class="form-group">
+                                        <input class="form-control" placeholder="Company Name* " required name="company_name" type="text">
                                     </div>
                                 </div>
                                 <div class="col-12 col-xs-12 padr4">
@@ -204,9 +210,19 @@
     // Confirm deletion of selected inquiries (Delete All)
     function confirmDeleteAll() {
         var selectedInquiries = document.querySelectorAll('.inquiry-checkbox:checked');
+        var leadIdsInput = document.getElementById('lead-ids-input');
         
         if (selectedInquiries.length > 0) {
             if (confirm('Are you sure you want to delete the selected inquiries?')) {
+                // Collect the selected inquiry IDs
+                var selectedIds = [];
+                selectedInquiries.forEach(checkbox => {
+                    selectedIds.push(checkbox.value);
+                });
+
+                // Set the selected inquiry IDs into the hidden input field
+                leadIdsInput.value = selectedIds.join(',');
+
                 // Submit the form to delete selected inquiries
                 document.getElementById('delete-selected-form').submit();
             }

@@ -165,6 +165,9 @@
 						<li><a class="has-arrow" href="{{url('listrequirement')}}"><i class='bx bx-radio-circle'></i>Enquiry Lead({{ $todayCount }} today)</a>
 							
 						</li>
+						<li><a class="has-arrow" href="{{url('catlogenquiryshow')}}"><i class='bx bx-radio-circle'></i>Enquiry By Catlog</a>
+							
+						</li>
 					
 						
 					</ul>
