@@ -7,6 +7,8 @@ use App\Models\Leadlist;
 use App\Models\Mail;
 use App\Models\Favenquiry;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use Illuminate\Support\Facades\Mail as MailFacade;
 
 
 class LeadlistController extends Controller
@@ -322,6 +324,46 @@ public function removeMultipleFromFavorites(Request $request)
     }
 
     return redirect()->back()->with('error', 'No inquiries selected or found.');
+}
+public function submitInquiry(Request $request)
+{
+    $user = Auth::user();
+    
+    // Check if email exists in User table
+    $emailUser = User::where('email', $request->email)->first();
+
+    if (!$emailUser) {
+        return back()->withErrors(['email' => 'Email not recognized']);
+    }
+
+    // Check if logged-in user's rank is 5
+    if ($user->rank == 5) {
+        return response()->json([
+            'message' => 'You are a free member, upgrade your membership',
+            'redirect' => route('service')
+        ]);
+    }
+
+    // Proceed if all checks are passed
+    // Get favorite leads for this user
+    $favoriteLeads = Favenquiry::where('user_id', $user->id)->with('lead')->get();
+
+    // Construct the email message
+    $message = "Here are the details of the leads you are interested in:\n\n";
+    foreach ($favoriteLeads as $lead) {
+        $message .= "Lead Title: " . $lead->lead->title . "\n";
+        $message .= "Quantity Required: " . $lead->lead->qty . " " . $lead->lead->unit . "\n";
+        $message .= "Message: " . $lead->lead->message . "\n";
+        $message .= "Posted In: " . $lead->lead->country . "\n\n";
+    }
+
+    // Send the email
+    MailFacade::raw($message, function ($mail) use ($request) {
+        $mail->to($request->email)
+             ->subject('Your Favorite Lead Details');
+    });
+
+    return back()->with('success', 'Inquiry sent successfully!');
 }
 
 

@@ -175,7 +175,10 @@
                                 </div>
                                 <div class="col-12 col-xs-12 padr4">
                                     <div class="form-group">
-                                        <input class="form-control" placeholder="Email* " required name="email" type="text">
+                                        <input class="form-control" placeholder="Email* " required name="email" type="text" value="{{ old('email') }}" required>
+                                        @if($errors->has('email'))
+            <p class="text-danger">{{ $errors->first('email') }}</p>
+        @endif
                                     </div>
                                 </div>
                                 <div class="col-12 col-xs-12 padr4">
@@ -213,6 +216,13 @@
                         </div>
 
                         </form>
+                        <script>
+// Check if rank is 5 and show alert before redirecting
+@if (session('message'))
+    alert("{{ session('message') }}");
+    window.location.href = "{{ session('redirect') }}";
+@endif
+</script>
                     </div>
                 </div>
             </div>
