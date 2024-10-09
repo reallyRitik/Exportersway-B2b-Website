@@ -242,9 +242,6 @@
 
                                                             <div class="row">
                                                                 <div class="col-md-12 form-container">
-
-
-
                                                                     <div class=" wt-signupwgg">
                                                                         <div class="row" style="width: 100%;">
                                                                             <div class="col-12">
@@ -327,7 +324,7 @@
                                                         </div>
                                                     </div>
 
-                                                    
+
                                                     <!-- modal -->
                                                 </div>
                                             </div>
@@ -351,55 +348,55 @@
     </div>
 
     <style>
-                                                        .wt-signupwgg {
-                                                            background: #fff;
-                                                            border-radius: 15px;
-                                                            min-height: 330px;
+        .wt-signupwgg {
+            background: #fff;
+            border-radius: 15px;
+            min-height: 330px;
 
-                                                        }
+        }
 
-                                                        .forminput {
-                                                            height: 40px;
-                                                            font-size: 16px;
-                                                            -webkit-border-radius: 4px;
-                                                            -moz-border-radius: 4px;
-                                                            border-radius: 0;
-                                                            box-shadow: none;
-                                                            background-color: #fff;
-                                                            padding: 6px 10px;
-                                                            transition: all .3s ease 0s;
-                                                            display: block;
-                                                            width: 100%;
-                                                            height: 34px;
-                                                            padding: 6px 12px;
-                                                            font-size: 14px;
-                                                            line-height: 1.42857143;
-                                                            color: #555;
-                                                            background-color: #fff;
-                                                            background-image: none;
-                                                            border: 1px solid #ccc;
-                                                            border-radius: 4px;
-                                                        }
+        .forminput {
+            height: 40px;
+            font-size: 16px;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 0;
+            box-shadow: none;
+            background-color: #fff;
+            padding: 6px 10px;
+            transition: all .3s ease 0s;
+            display: block;
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            background-color: #fff;
+            background-image: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
 
-                                                        .formdata {
-                                                            margin-bottom: 8px;
-                                                        }
-                                                    </style>
+        .formdata {
+            margin-bottom: 8px;
+        }
+    </style>
 
-                                                    <script>
-                                                        $('.modal-content').resizable({
-                                                            //alsoResize: ".modal-dialog",
-                                                            minHeight: 300,
-                                                            minWidth: 300
-                                                        });
-                                                        $('.modal-dialog').draggable();
+    <script>
+        $('.modal-content').resizable({
+            //alsoResize: ".modal-dialog",
+            minHeight: 300,
+            minWidth: 300
+        });
+        $('.modal-dialog').draggable();
 
-                                                        $('#myModal').on('show.bs.modal', function() {
-                                                            $(this).find('.modal-body').css({
-                                                                'max-height': '60%'
-                                                            });
-                                                        });
-                                                    </script>
+        $('#myModal').on('show.bs.modal', function() {
+            $(this).find('.modal-body').css({
+                'max-height': '60%'
+            });
+        });
+    </script>
     <style>
         .intpro:hover {
             color: #C77F60;
@@ -856,18 +853,15 @@
         }
     </script>
     <script>
-        // Show alert based on session status
         @if(session('status') == 'added')
-        alert('Product saved to favorites!'); // Display success message
-        // Use confirm to show buttons (Go to Favorites and OK)
+        alert('Product saved to favorites!');
         if (confirm("Go to favorites?")) {
-            window.location.href = "{{ url('addtofavorite') }}"; // Redirect to the favorites page
+            window.location.href = "{{ url('addtofavorite') }}";
         }
         @elseif(session('status') == 'already_saved')
-        alert('Product already saved in favorites!'); // Display already saved message
-        // Use confirm to show buttons (Go to Favorites and OK)
+        alert('Product already saved in favorites!'); 
         if (confirm("Go to favorites?")) {
-            window.location.href = "{{ url('addtofavorite') }}"; // Redirect to the favorites page
+            window.location.href = "{{ url('addtofavorite') }}";
         }
         @endif
     </script>

@@ -225,6 +225,7 @@ public function decrementPoints(Request $request)
 
     return response()->json(['points' => $customer->points]);
 }
+
 public function favenquiryadd($lead_id)
 {
     $user_id = Auth::id(); // Get the logged-in user's ID
@@ -259,7 +260,10 @@ public function favenquiryadd($lead_id)
 public function showFavorites()
 {
     $user_id = Auth::id(); // Get the logged-in user's ID
-
+    $captcha = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyz"), 0, 5);
+        
+    // Store the CAPTCHA in session
+    session(['captcha' => $captcha]);
     // Fetch the user's favorite enquiries
     $favenquiry = Favenquiry::where('user_id', $user_id)->first();
 
@@ -274,7 +278,7 @@ public function showFavorites()
     }
 
     // Pass the favorite leads to the view
-    return view('addtofav', compact('favoriteLeads'));
+    return view('addtofav', compact('favoriteLeads', 'captcha'));
 }
 
 public function removeFromFavorites($lead_id)

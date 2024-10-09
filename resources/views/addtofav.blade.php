@@ -30,26 +30,26 @@
 
         <div class="row" style="width:100%">
 
-            <div class="col-md-9 col-sm-12">
+            <div class="col-md-8 col-sm-8 col-lg-8">
 
                 <div class="row">
                     <div class="col-12 col-lg-7 col-md-7">
                         <h3>Your Favorite Items</h3>
                     </div>
                     <div class="col-12 col-lg-4 col-md-4" style="margin-top: 2%;">
-                    <label><input type='checkbox' id='check-all'> Select All</label>&nbsp;&nbsp;&nbsp;
+                        <label><input type='checkbox' id='check-all'> Select All</label>&nbsp;&nbsp;&nbsp;
 
-<!-- Delete All button with form -->
-<a href="javascript:void(0)" title="Delete All" onclick="confirmDeleteAll()" style="color: #000000;">
-    <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Delete All
-</a>
+                        <!-- Delete All button with form -->
+                        <a href="javascript:void(0)" title="Delete All" onclick="confirmDeleteAll()" style="color: #000000;">
+                            <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Delete All
+                        </a>
 
-<!-- Hidden form for deleting all selected inquiries -->
-<form id="delete-selected-form" action="{{ route('remove_multiple_from_favorites') }}" method="POST" style="display: none;">
-    @csrf
-    @method('DELETE')
-    <input type="hidden" id="lead-ids-input" name="lead_ids[]">
-</form>
+                        <!-- Hidden form for deleting all selected inquiries -->
+                        <form id="delete-selected-form" action="{{ route('remove_multiple_from_favorites') }}" method="POST" style="display: none;">
+                            @csrf
+                            @method('DELETE')
+                            <input type="hidden" id="lead-ids-input" name="lead_ids[]">
+                        </form>
                     </div>
 
                 </div>
@@ -139,7 +139,7 @@
 
 
 
-            <div class="col-md-3 col-sm-12 col-12 col-lg-3 signup__container sform ">
+            <div class="col-md-4 col-sm-4 col-12 col-lg-4 signup__container sform ">
                 <div class="home-signup-cont wt-signupw">
                     <div class="row" style="width: 100%;">
                         <div class="col-12">
@@ -155,8 +155,7 @@
                             <form mathod="" action="">
                                 <div class="col-12 col-xs-12 ">
                                     <div class="form-group">
-                                        <textarea class="form-control" rows="6" cols="7">Message</textarea>
-                                        <!-- <input class="form-control" placeholder="Massage* " required name="massage" type="text"> -->
+                                        <textarea rows="3" cols="43">Message</textarea>
                                     </div>
                                 </div>
                                 <div class="col-12 col-xs-12 padr4">
@@ -179,67 +178,115 @@
                                         <input class="form-control" placeholder="Email* " required name="email" type="text">
                                     </div>
                                 </div>
-
-                                <div class="col-xs-12">
-                                    <div class="boltop-btn-cont text-center mt10">
-                                        <button type="submit" class="btn boltop-btn btn-submit">Submit
-                                            <img src="https://img2.tradewheel.com/template1/images/arrow-rights.png" class="img-responsive">
-                                        </button>
+                                <div class="col-12 col-xs-12 padr4">
+                                    <div class="form-group">
+                                        <select name="cars" id="cars" class="form-control">
+                                            <option value="volvo">Country</option>
+                                            <option value="saab">Saab</option>
+                                            <option value="mercedes">Mercedes</option>
+                                            <option value="audi">Audi</option>
+                                        </select>
                                     </div>
-
                                 </div>
+                                <div class="col-12 col-xs-12 padr4">
+                                    <div class="form-group">
+                                        <!-- CAPTCHA box with light blue background -->
+                                        <div class="captcha-box">
+                                            <strong>{{ $captcha }}</strong>
+                                            <a href="javascript:void(0);" onclick="reloadCaptcha()">
+                                                <img src="{{asset('bannerimg/reload-botton.png')}}" alt="refresh">
+                                            </a>
+                                        </div>
 
-                            </form>
+                                        <!-- CAPTCHA input field -->
+                                        <input type="text" name="captcha" class="form-control mt-2" placeholder="Enter CAPTCHA" required>
+                                    </div>
+                                </div>
                         </div>
+                        <div class="col-xs-12">
+                            <div class="boltop-btn-cont text-center mt10">
+                                <button type="submit" class="btn boltop-btn btn-submit">Submit
+                                    <img src="https://img2.tradewheel.com/template1/images/arrow-rights.png" class="img-responsive">
+                                </button>
+                            </div>
+
+                        </div>
+
+                        </form>
                     </div>
                 </div>
-
             </div>
+
         </div>
+    </div>
 
     </div>
     <script>
-    // Select All functionality
-    document.getElementById('check-all').addEventListener('change', function() {
-        var checkboxes = document.querySelectorAll('.inquiry-checkbox');
-        checkboxes.forEach(checkbox => {
-            checkbox.checked = this.checked;
+        function reloadCaptcha() {
+            // Reload the form to generate a new CAPTCHA
+            location.reload();
+        }
+        // Select All functionality
+        document.getElementById('check-all').addEventListener('change', function() {
+            var checkboxes = document.querySelectorAll('.inquiry-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
         });
-    });
 
-    // Confirm deletion of selected inquiries (Delete All)
-    function confirmDeleteAll() {
-        var selectedInquiries = document.querySelectorAll('.inquiry-checkbox:checked');
-        var leadIdsInput = document.getElementById('lead-ids-input');
-        
-        if (selectedInquiries.length > 0) {
-            if (confirm('Are you sure you want to delete the selected inquiries?')) {
-                // Collect the selected inquiry IDs
-                var selectedIds = [];
-                selectedInquiries.forEach(checkbox => {
-                    selectedIds.push(checkbox.value);
-                });
+        // Confirm deletion of selected inquiries (Delete All)
+        function confirmDeleteAll() {
+            var selectedInquiries = document.querySelectorAll('.inquiry-checkbox:checked');
+            var leadIdsInput = document.getElementById('lead-ids-input');
 
-                // Set the selected inquiry IDs into the hidden input field
-                leadIdsInput.value = selectedIds.join(',');
+            if (selectedInquiries.length > 0) {
+                if (confirm('Are you sure you want to delete the selected inquiries?')) {
+                    // Collect the selected inquiry IDs
+                    var selectedIds = [];
+                    selectedInquiries.forEach(checkbox => {
+                        selectedIds.push(checkbox.value);
+                    });
 
-                // Submit the form to delete selected inquiries
-                document.getElementById('delete-selected-form').submit();
+                    // Set the selected inquiry IDs into the hidden input field
+                    leadIdsInput.value = selectedIds.join(',');
+
+                    // Submit the form to delete selected inquiries
+                    document.getElementById('delete-selected-form').submit();
+                }
+            } else {
+                alert('Please select at least one inquiry to delete.');
             }
-        } else {
-            alert('Please select at least one inquiry to delete.');
         }
-    }
 
-    // Confirm deletion for individual inquiry
-    function confirmDeletion(lead_id) {
-        if (confirm('Are you sure you want to remove this lead from your favorites?')) {
-            // Submit the hidden form if user confirms
-            document.getElementById('delete-form-' + lead_id).submit();
+        // Confirm deletion for individual inquiry
+        function confirmDeletion(lead_id) {
+            if (confirm('Are you sure you want to remove this lead from your favorites?')) {
+                // Submit the hidden form if user confirms
+                document.getElementById('delete-form-' + lead_id).submit();
+            }
         }
-    }
     </script>
     <style>
+        .captcha-box {
+            background-color: #d9edf7;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 5px;
+        }
+
+        .captcha-box strong {
+            font-size: 20px;
+            letter-spacing: 3px;
+        }
+
+        .captcha-box a img {
+            width: 24px;
+            height: 24px;
+        }
+
+
         .intpro:hover {
             color: #C77F60;
         }
