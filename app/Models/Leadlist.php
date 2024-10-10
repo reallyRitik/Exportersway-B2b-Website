@@ -17,4 +17,9 @@ class Leadlist extends Model
     {
         return $this->hasMany(Product::class, 'title'); // Assuming there's a foreign key 'leadlist_id' in the products table
     }
+
+    public function favenquiries()
+    {
+        return $this->hasMany(Favenquiry::class);
+    }
 }   

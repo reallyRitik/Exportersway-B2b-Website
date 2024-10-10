@@ -16,4 +16,8 @@ class Favenquiry extends Model
     protected $casts = [
         'lead_ids' => 'array', // Cast lead_ids as an array
     ];
+    public function lead()
+    {
+        return $this->belongsTo(Leadlist::class, 'lead_id'); // Assuming 'lead_id' is the foreign key
+    }
 }

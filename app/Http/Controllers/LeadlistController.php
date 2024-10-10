@@ -8,6 +8,9 @@ use App\Models\Mail;
 use App\Models\Favenquiry;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use PHPMailer\PHPMailer\PHPMailer;
+use App\Models\Listcustomer;
+use PHPMailer\PHPMailer\Exception;
 use Illuminate\Support\Facades\Mail as MailFacade;
 
 
@@ -325,45 +328,78 @@ public function removeMultipleFromFavorites(Request $request)
 
     return redirect()->back()->with('error', 'No inquiries selected or found.');
 }
+
 public function submitInquiry(Request $request)
 {
     $user = Auth::user();
-    
-    // Check if email exists in User table
+
+    // Check if email exists in the User table
     $emailUser = User::where('email', $request->email)->first();
 
     if (!$emailUser) {
         return back()->withErrors(['email' => 'Email not recognized']);
     }
 
-    // Check if logged-in user's rank is 5
-    if ($user->rank == 5) {
+    // Check if the logged-in user's rank is 5 in the Customer model
+    $customer = Listcustomer::where('user_id', $user->id)->first();
+
+    if ($customer && $customer->rank == 5) {
         return response()->json([
             'message' => 'You are a free member, upgrade your membership',
-            'redirect' => route('service')
+            'redirect' => url('adverties')
         ]);
     }
 
-    // Proceed if all checks are passed
     // Get favorite leads for this user
     $favoriteLeads = Favenquiry::where('user_id', $user->id)->with('lead')->get();
 
     // Construct the email message
-    $message = "Here are the details of the leads you are interested in:\n\n";
-    foreach ($favoriteLeads as $lead) {
-        $message .= "Lead Title: " . $lead->lead->title . "\n";
-        $message .= "Quantity Required: " . $lead->lead->qty . " " . $lead->lead->unit . "\n";
-        $message .= "Message: " . $lead->lead->message . "\n";
-        $message .= "Posted In: " . $lead->lead->country . "\n\n";
+   $message = "Here are the details of the leads you are interested in:\n\n";
+foreach ($favoriteLeads as $favoriteLead) {
+    if ($favoriteLead->lead) { // Check if lead exists
+        $message .= "Lead Title: " . $favoriteLead->lead->title . "\n";
+        $message .= "Quantity Required: " . $favoriteLead->lead->qty . " " . $favoriteLead->lead->unit . "\n";
+        $message .= "Message: " . $favoriteLead->lead->message . "\n";
+        $message .= "Posted In: " . $favoriteLead->lead->country . "\n\n";
+    } else {
+        // Include more detail about the favoriteLead
+        $message .= "Lead information is missing for favorite inquiry with ID: " . $favoriteLead->id . "\n\n";
     }
+}
 
-    // Send the email
-    MailFacade::raw($message, function ($mail) use ($request) {
-        $mail->to($request->email)
-             ->subject('Your Favorite Lead Details');
-    });
+    // PHPMailer setup
+    $mail = new PHPMailer(true);
+    $mail->SMTPDebug = 2; // Enable verbose debug output
+    $mail->Timeout = 10; // Set timeout to 10 seconds
 
-    return back()->with('success', 'Inquiry sent successfully!');
+    try {
+        // Server settings
+        $mail->isSMTP();
+        $mail->Host       = 'smtp.hostinger.com'; // Your SMTP server
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'gaurav.s@exportersway.com';
+        $mail->Password   = 'Gaurav#$1234'; // Use environment variable in production
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Use STARTTLS
+        $mail->Port       = 587; // Use 587 for TLS
+
+        // Recipients
+        $mail->setFrom('gaurav.s@exportersway.com', 'Your Company');
+        $mail->addAddress($request->email);
+
+        // Content
+        $mail->isHTML(false);
+        $mail->Subject = 'Your Favorite Lead Details';
+        $mail->Body    = $message;
+
+        // Send the email
+        $mail->send();
+
+        // Flash success message to session
+        return back()->with('success', 'Inquiry sent successfully!');
+
+    } catch (Exception $e) {
+        return back()->withErrors(['email' => 'Email could not be sent. Mailer Error: ' . $mail->ErrorInfo]);
+    }
 }
 
 
