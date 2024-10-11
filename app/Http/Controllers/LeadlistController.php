@@ -335,79 +335,87 @@ class LeadlistController extends Controller
     }
 
     public function submitInquiry(Request $request)
-{
-    $user = Auth::user(); // Ensure the user is logged in
-
-    // Check if email exists in the User table
-    $emailUser = User::where('email', $request->email)->first();
-    if (!$emailUser) {
-        return back()->withErrors(['email' => 'Email not recognized']);
-    }
-
-    // Check if the logged-in user's rank is 5 in the Customer model
-    $customer = Listcustomer::where('user_id', $user->id)->first();
-    if ($customer && $customer->rank == 5) {
-        return response()->json([
-            'message' => 'You are a free member, upgrade your membership',
-            'redirect' => url('adverties')
-        ]);
-    }
-
-    // Get favorite leads for this user
-    $favoriteLeads = Favenquiry::where('user_id', $user->id)->get();
-
-    // Construct the email message
-    $message = "Here are the details of the leads you are interested in:\n\n";
-
-    foreach ($favoriteLeads as $favoriteLead) {
-        $leads = $favoriteLead->leads(); // Fetch the leads using the method
-
-        if ($leads->isNotEmpty()) {
-            foreach ($leads as $lead) {
-                $message .= "Lead Title: " . $lead->title . "\n";
-                $message .= "Quantity Required: " . $lead->qty . " " . $lead->unit . "\n";
-                $message .= "Message: " . $lead->message . "\n";
-                $message .= "Posted In: " . $lead->country . "\n\n";
-            }
-        } else {
-            $message .= "Lead information is missing for favorite inquiry with ID: " . $favoriteLead->id . "\n\n";
+    {
+        $user = Auth::user();
+    
+        $emailUser = User::where('email', $request->email)->first();
+        if (!$emailUser) {
+            return back()->withErrors(['email' => 'Email not recognized']);
         }
+    
+        $customer = Listcustomer::where('user_id', $user->id)->first();
+        if ($customer && $customer->rank == 5) {
+            return response()->json([
+                'message' => 'You are a free member, upgrade your membership',
+                'redirect' => url('adverties')
+            ]);
+        }
+    
+        // Get favorite leads for this user
+        $favoriteLeads = Favenquiry::where('user_id', $user->id)->get();
+    
+        // Initialize HTML table for email content
+        $message = '<h3>Your Favorite Lead Details</h3>';
+        $message .= '<table border="1" cellpadding="10" cellspacing="0" style="width:100%; border-collapse: collapse;">';
+        $message .= '<thead>
+                        <tr>
+                            <th style="text-align:left;">Lead Title</th>
+                            <th style="text-align:left;">Action</th>
+                        </tr>
+                    </thead>';
+        $message .= '<tbody>';
+    
+        foreach ($favoriteLeads as $favoriteLead) {
+            // Loop through each lead ID in the JSON array
+            foreach ($favoriteLead->lead_ids as $leadId) {
+                $lead = Leadlist::find($leadId);
+                if ($lead) {
+                    // Add each lead's details as a new row in the table
+                    $message .= '<tr>';
+                    $message .= '<td>' . $lead->title . '</td>';
+                    $message .= '<td><a href="http://exportersway.com" style="background-color: #4CAF50; color: white; padding: 10px 15px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px;">Click Here</a></td>';
+                    $message .= '</tr>';
+                }
+            }
+        }
+    
+        $message .= '</tbody>';
+        $message .= '</table>';
+    
+        // PHPMailer setup
+        $mail = new PHPMailer(true);
+        $mail->SMTPDebug = 2;
+        $mail->Timeout = 10;
+    
+        try {
+            // Server settings
+            $mail->isSMTP();
+            $mail->Host       = 'smtp.hostinger.com';
+            $mail->SMTPAuth   = true;
+            $mail->Username   = 'gaurav.s@exportersway.com';  // Replace with your email address
+            $mail->Password   = 'Gaurav#$1234';  // Replace with your email password
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port       = 587;
+    
+            // Recipients
+            $mail->setFrom('gaurav.s@exportersway.com', 'Your Company');
+            $mail->addAddress($request->email);
+    
+            // Content
+            $mail->isHTML(true);  // Set email format to HTML
+            $mail->Subject = 'Your Favorite Lead Details';
+            $mail->Body    = $message;
+    
+            // Send the email
+            $mail->send();
+    
+        } catch (Exception $e) {
+            return back()->withErrors(['email' => 'Email could not be sent. Mailer Error: ' . $mail->ErrorInfo]);
+        }
+    
+        return back()->with('success', 'Inquiry details sent successfully!');
     }
-
-    // PHPMailer setup
-    $mail = new PHPMailer(true);
-    $mail->SMTPDebug = 2; // Enable verbose debug output
-    $mail->Timeout = 10;  // Set timeout to 10 seconds
-
-    try {
-        // Server settings
-        $mail->isSMTP();
-        $mail->Host       = 'smtp.hostinger.com';
-        $mail->SMTPAuth   = true;
-        $mail->Username   = 'gaurav.s@exportersway.com';
-        $mail->Password   = 'Gaurav#$1234'; // Use environment variable in production
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = 587;
-
-        // Recipients
-        $mail->setFrom('gaurav.s@exportersway.com', 'Your Company');
-        $mail->addAddress($request->email);
-
-        // Content
-        $mail->isHTML(false);
-        $mail->Subject = 'Your Favorite Lead Details';
-        $mail->Body    = $message;
-
-        // Send the email
-        $mail->send();
-
-        // Flash success message to session
-        return back()->with('success', 'Inquiry sent successfully!');
-
-    } catch (Exception $e) {
-        return back()->withErrors(['email' => 'Email could not be sent. Mailer Error: ' . $mail->ErrorInfo]);
-    }
-}
-
+    
+    
     
 }
