@@ -336,15 +336,16 @@ class LeadlistController extends Controller
 
     public function submitInquiry(Request $request)
 {
-    $user = Auth::user();
+    $user = Auth::user(); // Ensure the user is logged in
 
+    // Check if email exists in the User table
     $emailUser = User::where('email', $request->email)->first();
     if (!$emailUser) {
         return back()->withErrors(['email' => 'Email not recognized']);
     }
 
+    // Check if the logged-in user's rank is 5 in the Customer model
     $customer = Listcustomer::where('user_id', $user->id)->first();
-
     if ($customer && $customer->rank == 5) {
         return response()->json([
             'message' => 'You are a free member, upgrade your membership',
@@ -352,15 +353,16 @@ class LeadlistController extends Controller
         ]);
     }
 
-    // Get the favorite leads using the relationship
+    // Get favorite leads for this user
     $favoriteLeads = Favenquiry::where('user_id', $user->id)->get();
 
+    // Construct the email message
     $message = "Here are the details of the leads you are interested in:\n\n";
 
     foreach ($favoriteLeads as $favoriteLead) {
-        $leads = $favoriteLead->leads(); // Fetch the leads using the relationship
+        $leads = $favoriteLead->leads(); // Fetch the leads using the method
 
-        if ($leads) {
+        if ($leads->isNotEmpty()) {
             foreach ($leads as $lead) {
                 $message .= "Lead Title: " . $lead->title . "\n";
                 $message .= "Quantity Required: " . $lead->qty . " " . $lead->unit . "\n";
@@ -374,27 +376,32 @@ class LeadlistController extends Controller
 
     // PHPMailer setup
     $mail = new PHPMailer(true);
-    $mail->SMTPDebug = 2;
-    $mail->Timeout = 10;
+    $mail->SMTPDebug = 2; // Enable verbose debug output
+    $mail->Timeout = 10;  // Set timeout to 10 seconds
 
     try {
+        // Server settings
         $mail->isSMTP();
-        $mail->Host = 'smtp.hostinger.com';
-        $mail->SMTPAuth = true;
-        $mail->Username = 'gaurav.s@exportersway.com';
-        $mail->Password = 'Gaurav#$1234';
+        $mail->Host       = 'smtp.hostinger.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'gaurav.s@exportersway.com';
+        $mail->Password   = 'Gaurav#$1234'; // Use environment variable in production
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = 587;
+        $mail->Port       = 587;
 
+        // Recipients
         $mail->setFrom('gaurav.s@exportersway.com', 'Your Company');
         $mail->addAddress($request->email);
 
+        // Content
         $mail->isHTML(false);
         $mail->Subject = 'Your Favorite Lead Details';
-        $mail->Body = $message;
+        $mail->Body    = $message;
 
+        // Send the email
         $mail->send();
 
+        // Flash success message to session
         return back()->with('success', 'Inquiry sent successfully!');
 
     } catch (Exception $e) {
