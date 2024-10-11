@@ -20,6 +20,6 @@ class Leadlist extends Model
 
     public function favenquiries()
     {
-        return $this->hasMany(Favenquiry::class);
+        return $this->belongsToMany(Favenquiry::class, 'favenquiry', 'lead_ids', 'id');
     }
 }   
