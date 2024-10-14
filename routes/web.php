@@ -307,6 +307,7 @@ Route::get('/filter-by-country/{country}', [HeaderController::class, 'filterByCo
 Route::get('/viewlead', [LeadlistController::class, 'viewlead'])->name('viewlead');
 Route::get('/searchviewlead', [LeadlistController::class, 'searchviewlead'])->name('searchviewlead');
 Route::get('/leaddetails/{id}', [LeadlistController::class, 'leaddetails'])->name('leaddetails');
+
 Route::get('/viewcompany/{name}', [SearchviewController::class, 'viewcompany'])->name('viewcompany');
 Route::get('/viewproduct/{id}', [SearchviewController::class, 'viewproduct'])->name('viewproduct');
 Route::get('/viewabout/{id}', [SearchviewController::class, 'viewabout'])->name('viewabout');
