@@ -155,37 +155,69 @@
 
                     <div class="row" style="width: 100%;">
                         <div class="reg-form form-container">
-                            <form mathod="" action="">
-                                <div class="col-12 col-xs-12 padr4">
-                                    <div class="form-group">
-                                        <input class="form-control" placeholder="Full Name* " required name="name" type="text">
-                                    </div>
-                                </div>
-                                <div class="col-12 col-xs-12 padr4">
-                                    <div class="form-group">
-                                        <input class="form-control" placeholder="Mobile* " required name="mobile" type="text">
-                                    </div>
-                                </div>
-                                <div class="col-12 col-xs-12 padr4">
-                                    <div class="form-group">
-                                        <input class="form-control" placeholder="Email* " required name="email" type="text">
-                                    </div>
-                                </div>
-                                <div class="col-12 col-xs-12 padr4">
-                                    <div class="form-group">
-                                        <input class="form-control" placeholder="Massage* " required name="massage" type="text">
-                                    </div>
-                                </div>
-                                <div class="col-xs-12">
-                                    <div class="boltop-btn-cont text-center mt10">
-                                        <button type="submit" class="btn boltop-btn btn-submit">Submit
-                                            <img src="https://img2.tradewheel.com/template1/images/arrow-rights.png" class="img-responsive">
-                                        </button>
-                                    </div>
+                        <form method="POST" action="{{ url('submit-inquiry') }}">
+    @csrf
+    <div class="col-12 col-xs-12">
+        <div class="form-group">
+            <textarea name="message" rows="3" cols="43" placeholder="Message" required></textarea>
+        </div>
+    </div>
+    <div class="col-12 col-xs-12 padr4">
+        <div class="form-group">
+            <input class="form-control" name="name" placeholder="Full Name* " required type="text">
+        </div>
+    </div>
+    <div class="col-12 col-xs-12 padr4">
+        <div class="form-group">
+            <input class="form-control" name="company_name" placeholder="Company Name* " required type="text">
+        </div>
+    </div>
+    <div class="col-12 col-xs-12 padr4">
+        <div class="form-group">
+            <input class="form-control" name="mobile" placeholder="Mobile* " required type="text">
+        </div>
+    </div>
+    <div class="col-12 col-xs-12 padr4">
+        <div class="form-group">
+            <input class="form-control" name="email" placeholder="Email* " required type="email" value="{{ old('email') }}">
+            @if($errors->has('email'))
+                <p class="text-danger">{{ $errors->first('email') }}</p>
+            @endif
+        </div>
+    </div>
+    <div class="col-12 col-xs-12 padr4">
+        <div class="form-group">
+            <select name="country" class="form-control">
+                <option value="volvo">Country</option>
+                <option value="saab">Saab</option>
+                <option value="mercedes">Mercedes</option>
+                <option value="audi">Audi</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-12 col-xs-12 padr4">
+        <div class="form-group">
+            <div class="captcha-box">
+                <strong>{{ $captcha }}</strong>
+                <a href="javascript:void(0);" onclick="reloadCaptcha()">
+                    <img src="{{ asset('bannerimg/reload-botton.png') }}" alt="refresh">
+                </a>
+            </div>
+            <input type="text" name="captcha" class="form-control mt-2" placeholder="Enter CAPTCHA" required>
+            @if($errors->has('captcha'))
+                <p class="text-danger">{{ $errors->first('captcha') }}</p>
+            @endif
+        </div>
+    </div>
+    <div class="col-xs-12">
+        <div class="boltop-btn-cont text-center mt10">
+            <button type="submit" class="btn boltop-btn btn-submit">Submit
+                <img src="https://img2.tradewheel.com/template1/images/arrow-rights.png" class="img-responsive">
+            </button>
+        </div>
+    </div>
+</form>
 
-                                </div>
-
-                            </form>
                         </div>
                     </div>
                 </div>

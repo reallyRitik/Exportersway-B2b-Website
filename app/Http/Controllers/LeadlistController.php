@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Leadlist;
 use App\Models\Mail;
 use App\Models\Favenquiry;
+use App\Models\Inquiry;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Listcustomer;
@@ -341,159 +342,137 @@ class LeadlistController extends Controller
     }
 
     public function submitInquiry(Request $request)
-{
-    $user = Auth::user();
-
-    $emailUser = User::where('email', $request->email)->first();
-    if (!$emailUser) {
-        return back()->withErrors(['email' => 'Email not recognized']);
-    }
-
-    $customer = Listcustomer::where('user_id', $user->id)->first();
-    if ($customer && $customer->rank == 5) {
-        return response()->json([
-            'message' => 'You are a free member, upgrade your membership',
-            'redirect' => url('adverties')
+    {
+        $user = Auth::user();
+    
+        // Validate form input
+        $request->validate([
+            'name' => 'required|string',
+            'company_name' => 'required|string',
+            'mobile' => 'required|string',
+            'email' => 'required|email',
+            'message' => 'required|string',
+            'captcha' => 'required'
         ]);
-    }
-
-    // Get favorite leads for this user
-    $favoriteLeads = Favenquiry::where('user_id', $user->id)->get();
-
-    // HTML content for the email
-    $message = '
-    <html>
-    <head>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-            }
-            .banner {
-                text-align: center;
-                margin-bottom: 20px;
-            }
-            .table {
-                width: 100%;
-                max-width: 600px;
-                border-collapse: collapse;
-                margin-bottom: 20px;
-            }
-            .table th, .table td {
-                border: 1px solid #ddd;
-                padding: 10px;
-                text-align: left;
-            }
-            .table th {
-                background-color: #f2f2f2;
-                color: #333;
-            }
-            .click-btn {
-                display: inline-block;
-                text-align: center;
-                text-decoration: none;
-                color: white;
-                border-bottom: 1px solid black;
-                font-weight: bold;
-                margin-top: 10px;
-            }
-            
-            .terms {
-                margin-top: 20px;
-                font-size: 12px;
-                color: #666;
-            }
-            @media screen and (max-width: 600px) {
-                .table {
-                    width: 100%;
-                }
-                .table th, .table td {
-                    padding: 8px;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <div class="banner">
-            <img src="https://exportersway.com/bannerimg/Global-B2B-Buyers.jpg" alt="Company Banner" width="100%" height="150px" />
-        </div>
-        <h2>Your Favorite Lead Details</h2>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Lead Title</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>';
-
-  foreach ($favoriteLeads as $favoriteLead) {
-    foreach ($favoriteLead->lead_ids as $leadId) {
-        $lead = Leadlist::find($leadId);
-        if ($lead) {
-            // Generate a secure token for this lead and user
-            $token = Str::random(80); // Generate a random token
-
-            // Store the token in the Leadtoken model
-            Leadtoken::create([
-                'user_id' => $user->id,
-                'lead_id' => $leadId,
-                'token' => $token
+    
+        // CAPTCHA validation
+        if ($request->captcha !== session('captcha')) {
+            return back()->withErrors(['captcha' => 'CAPTCHA is invalid.']);
+        }
+    
+        // Check if the email exists in the users table
+        $emailUser = User::where('email', $request->email)->first();
+        if (!$emailUser) {
+            return back()->withErrors(['email' => 'Email not recognized']);
+        }
+    
+        // Check user rank
+        $customer = Listcustomer::where('user_id', $user->id)->first();
+        if ($customer && $customer->rank == 5) {
+            return response()->json([
+                'message' => 'You are a free member, upgrade your membership',
+                'redirect' => url('adverties')
             ]);
-
-            // Generate the URL with the token
-            $leadUrl = url('leaddetail/' . $leadId . '?token=' . $token);
-
-            $message .= '
-            <tr>
-                <td>' . $lead->title . '</td>
-                <td><a href="' . $leadUrl . '" class="click-btn">Click Here</a></td>
-            </tr>';
+        }
+    
+        // Save form data to the database
+        Inquiry::create([
+            'name' => $request->name,
+            'company_name' => $request->company_name,
+            'mobile' => $request->mobile,
+            'email' => $request->email,
+            'message' => $request->message,
+            'user_id' => $user->id
+        ]);
+    
+        // Retrieve favorite leads
+        $favoriteLeads = Favenquiry::where('user_id', $user->id)->get();
+    
+        // HTML content for the email
+        $message = '
+        <html>
+        <head>
+            <style>
+                /* Your email styles */
+            </style>
+        </head>
+        <body>
+            <div class="banner">
+                <img src="https://exportersway.com/bannerimg/Global-B2B-Buyers.jpg" alt="Company Banner" width="100%" height="150px" />
+            </div>
+            <h2>Your Favorite Lead Details</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Lead Title</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>';
+    
+        // Loop through favorite leads and prepare the email content
+        foreach ($favoriteLeads as $favoriteLead) {
+            foreach ($favoriteLead->lead_ids as $leadId) {
+                $lead = Leadlist::find($leadId);
+                if ($lead) {
+                    $token = Str::random(80);
+    
+                    // Save token to Leadtoken model
+                    Leadtoken::create([
+                        'user_id' => $user->id,
+                        'lead_id' => $leadId,
+                        'token' => $token
+                    ]);
+    
+                    // Prepare the lead URL
+                    $leadUrl = url('leaddetail/' . $leadId . '?token=' . $token);
+    
+                    // Add lead details to the email message
+                    $message .= '
+                    <tr>
+                        <td>' . $lead->title . '</td>
+                        <td><a href="' . $leadUrl . '" class="click-btn">Click Here</a></td>
+                    </tr>';
+                }
+            }
+        }
+    
+        $message .= '
+                </tbody>
+            </table>
+            <div class="terms">
+                <p>Terms and Conditions: Lorem ipsum dolor sit amet...</p>
+            </div>
+        </body>
+        </html>';
+    
+        // Send email using PHPMailer
+        $mail = new PHPMailer(true);
+        $mail->isSMTP();
+        $mail->Host       = 'smtp.hostinger.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'noreply@exportersway.com';
+        $mail->Password   = 'No#@reply$#1234';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = 587;
+    
+        try {
+            $mail->setFrom('noreply@exportersway.com', 'Your Company');
+            $mail->addAddress($request->email);
+            $mail->addReplyTo('noreply@exportersway.com', 'No Reply');
+            $mail->isHTML(true);
+            $mail->Subject = 'Your Favorite Lead Details';
+            $mail->Body    = $message;
+    
+            $mail->send();
+    
+            return back()->with('success', 'Inquiry submitted and email sent successfully!');
+    
+        } catch (Exception $e) {
+            return back()->withErrors(['email' => 'Email could not be sent. Mailer Error: ' . $mail->ErrorInfo]);
         }
     }
-}
-
-
-    $message .= '
-            </tbody>
-        </table>
-        <div class="terms">
-            <p>Terms and Conditions: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.</p>
-        </div>
-    </body>
-    </html>';
-
-    // PHPMailer setup
-    $mail = new PHPMailer(true);
-    $mail->isSMTP();
-    $mail->Host       = 'smtp.hostinger.com';
-    $mail->SMTPAuth   = true;
-    $mail->Username   = 'noreply@exportersway.com';
-    $mail->Password   = 'No#@reply$#1234';
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port       = 587;
-
-    try {
-        // Recipients
-        $mail->setFrom('noreply@exportersway.com', 'Your Company');
-        $mail->addAddress($request->email);
-
-        // Set "Reply-To" to a no-reply address
-        $mail->addReplyTo('noreply@exportersway.com', 'No Reply');
-
-        // Content
-        $mail->isHTML(true);
-        $mail->Subject = 'Your Favorite Lead Details';
-        $mail->Body    = $message;
-
-        // Send the email
-        $mail->send();
-
-        return back()->with('success', 'All inquiries sent successfully!');
-
-    } catch (Exception $e) {
-        return back()->withErrors(['email' => 'Email could not be sent. Mailer Error: ' . $mail->ErrorInfo]);
-    }
-}
+    
 
 
 public function showLeadDetails(Request $request, $id)
@@ -508,10 +487,11 @@ public function showLeadDetails(Request $request, $id)
 
     // Define lead view limits based on rank
     $viewLimits = [
-        1 => 2,  // Rank 1: 2 leads per day
-        2 => 3,  // Rank 2: 5 leads per day
-        3 => 4, // Rank 3: 10 leads per day
-        // Continue for other ranks...
+        1 => 8,
+        2 => 6,
+        3 => 4,
+        4 => 2, 
+        6 => 10, 
     ];
 
     // Get the lead viewing limit for the user's rank
