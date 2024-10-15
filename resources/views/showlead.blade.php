@@ -111,20 +111,34 @@
                                         <i class="search-icon"></i>
                                     </button>
                                 </div>
-
                             </div>
                         </form>
-
                     </div>
                 </div>
-                <div class="col-md-4 col-lg-4">
-                    <div class="totalcount">
-
-                    </div>
-                </div>
+                @if(Auth::check() && $hasFavorites)
+    <div class="col-md-4 col-lg-4 text-center">
+        <a href="{{ url('addtofavorite') }}" class="btn add-to-favorites">
+            <i class="fas fa-heart"></i> View Your Favorites Item
+        </a>
+    </div>
+@endif
+ 
             </div>
         </div>
     </section>
+    <style>
+        .add-to-favorites {
+    transition: color 0.3s ease, background-color 0.3s ease;
+    padding: 5px;
+    background: #6f7059;
+    color: white;
+}
+
+.add-to-favorites:hover {
+    color: #fff;
+    background-color: #dc3545; /* Bootstrap's red color */
+}
+    </style>
 
     <div class="container-fluid">
         <div class="row" style="width:100%">

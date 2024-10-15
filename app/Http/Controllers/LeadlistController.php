@@ -53,7 +53,8 @@ class LeadlistController extends Controller
         $query = Leadlist::orderBy('created_at', 'DESC');
         $dataCount = $query->count();
         $showlead = $query->paginate(20);
-        return view('showlead', compact('showlead', 'dataCount'));
+        $hasFavorites = Favenquiry::where('user_id', Auth::id())->exists();
+        return view('showlead', compact('showlead', 'dataCount', 'hasFavorites'));
     }
 
     public function leaddetails($id)
@@ -72,7 +73,8 @@ class LeadlistController extends Controller
         $leads = Leadlist::where('title', 'LIKE', '%' . $leadName . '%')
             ->orderBy('created_at', 'desc')
             ->paginate(20);
-        return view('searchlead', compact('leads'));
+            $hasFavorites = Favenquiry::where('user_id', Auth::id())->exists();
+        return view('searchlead', compact('leads', 'hasFavorites'));
     }
 
     public function managelead(Request $request)

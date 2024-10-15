@@ -82,11 +82,13 @@
 
                     </div>
                 </div>
-                <div class="col-md-4 col-lg-4">
-                    <div class="totalcount">
-
-                    </div>
-                </div>
+                @if(Auth::check() && $hasFavorites)
+    <div class="col-md-4 col-lg-4 text-center">
+        <a href="{{ url('addtofavorite') }}" class="btn add-to-favorites">
+            <i class="fas fa-heart"></i> View Your Favorites Item
+        </a>
+    </div>
+@endif
             </div>
         </div>
     </section>
