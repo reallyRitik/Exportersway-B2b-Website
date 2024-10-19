@@ -212,7 +212,7 @@ public function updatemembership(Request $request, $id)
     Log::info('Membership updated successfully.', ['id' => $id, 'new_rank' => $newRank]);
 
     // Send confirmation email using PHPMailer
-    MailHelper::sendMembershipUpdateMail($data->email, $data->name, $newRankName);
+    MailHelper::sendMembershipUpdateMail($data->email, $data->name, $newRankName, $data->company_name,  $data->companylogo);
 
     return back()->with('success', 'Membership successfully updated and email sent.');
 }
