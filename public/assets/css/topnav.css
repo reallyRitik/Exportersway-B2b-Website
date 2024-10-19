@@ -1,0 +1,43 @@
+
+.top_searchesmain{
+  display: flex;
+  align-items: center;
+  gap: 50px;
+}
+@media screen and (max-width: 480px) {
+  
+  .top_searchesmain{
+   display: none;
+  }
+  }
+.main{
+    margin-left: 4%;
+    display: flex;
+    text-align: center;
+    gap: 4%;
+    border-radius: 3px;
+   
+  }
+  .namedata{
+    display: flex;
+justify-content: center;    
+    text-align: center;
+    gap: 20px;
+  }
+ 
+  .namedata a{
+    border-radius: 16px;
+    gap: 4px;
+    border: 1px solid darkgray;
+    padding: 7px;
+    font-size: 12px;
+  }
+  .main h3{
+    margin: 0 0 6px 0;
+    padding: 10px 0 10px 10px;
+    background-color: whitesmoke;
+    font-size: 18px;
+    font-weight: 500;
+  }
+  
+  

@@ -1,0 +1,31 @@
+
+@media screen and (max-width: 480px) {
+    .heading h2{
+        font-size: 22px;
+        margin-left: 9px;
+    }
+  }
+   .heading h2{
+        font-size: 22px;
+        margin-left: 9px;
+    }
+
+    .popu{
+        text-align: center;
+font-size: 26px;
+font-family: auto;
+}
+.bord{
+    border: none !important;
+}
+.floating-label
+{
+    margin-top:  1em;
+}
+.texta{
+        width: 100%;
+background: blueviolet;
+font-size: 18px;
+font-weight: bold;
+color: white;
+}

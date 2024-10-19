@@ -1,0 +1,81 @@
+.bg-container {
+    height: 500px;
+    background-size: cover!important;
+    background-position: center center!important;
+    background: url('../../reviewlogo/B2B Global Marketplace - ExportersWay Partners .png') no-repeat;
+    
+}
+.outer-border {
+    max-width: 100%;
+    margin-top: 75px;
+    height: 100%;
+    min-height: 350px;
+    width: 100%;
+    background-size: 100% 100%!important;
+    background: url('../../reviewlogo/backgeound-image.png') no-repeat;
+}
+.inner-border {
+    color: #fff;
+    padding: 40px 35px;
+    z-index: 9999;
+}
+.inner-border h1 {
+    font-size: 48px;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 15px 0;
+}
+.inner-border p {
+    font-size: 18px;
+    line-height: 30px;
+    padding: 10px 25px;
+}
+.our-mission.r-section {
+    margin-bottom: 100px;
+}
+.secondary-heading {
+    font-size: 40px;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 15px 0;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+.r-text-container {
+    margin-left: -60px;
+    margin-top: 38px;
+    background: #f3f3f3;
+    color: #828282;
+    padding: 20px 80px;
+    min-height: 198px;
+    -webkit-box-shadow: -9px 11px 9px -4px rgba(120,120,120,1);
+    -moz-box-shadow: -9px 11px 9px -4px rgba(120,120,120,1);
+    box-shadow: -9px 11px 9px -4px rgba(120,120,120,1);
+    width: calc(100% + 60px);
+}
+
+.r-section h3 {
+    font-size: 30px;
+    text-transform: uppercase;
+    color: #ff6601;
+    font-weight: 700;
+    padding-bottom: 0;
+}
+.r-section .page-content p {
+    margin-top: 5px;
+    padding-bottom: 25px;
+}
+ a{
+    text-decoration: none;
+ }
+
+.secondary-heading {
+    font-size: 40px;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 15px 0;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
