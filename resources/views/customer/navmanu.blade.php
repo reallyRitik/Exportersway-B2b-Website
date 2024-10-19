@@ -117,7 +117,7 @@
 
 						<li> <a href="{{ url('viewlead') }}"><i class='bx bx-radio-circle'></i>Incoming Buyer Leads</a>
 						</li>
-						<li> <a href="{{url('showenquiry')}}"><i class='bx bx-radio-circle'></i>Incoming Enquiries</a>
+						<li> <a href="{{url('showlead')}}"><i class='bx bx-radio-circle'></i>Incoming Enquiries</a>
 						</li>
 						
 						<li> <a href="{{url('ourrequirements')}}"><i class='bx bx-radio-circle'></i>Add Requirement</a>

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Listcustomer;
 use App\Models\Product;
 use Illuminate\Support\Facades\Log;
+use App\Helpers\MailHelper;
 use Carbon\Carbon;
 class ListcustomerController extends Controller
 {
@@ -184,29 +185,37 @@ public function editpoints(Request $request, $id)
 
     
     
-       public function updatemembership(Request $request, $id)
+public function updatemembership(Request $request, $id)
 {
     $data = Listcustomer::findOrFail($id);
-        $newRank = $request->input('rank');
-        
-        $points = $this->calculatePoints($newRank);
-        $data->rank = $newRank;
-        $data->points = $points;
-        $newRankName = $data->getRankName($newRank);
-        $rankHistory = $data->rank_history ?? [];
-        $membershipExpiry = Carbon::now()->addYear();
-        $data->membership_expiry = $membershipExpiry;
-        $rankHistory[] = [
-            'rank' => $newRank,
-            'rank_name' => $newRankName,
-            'updated_at' => now()
-        ];
-        $data->rank_history = $rankHistory;
-        $data->save();
-        Log::info('Membership updated successfully.', ['id' => $id, 'new_rank' => $newRank]);
+    $newRank = $request->input('rank');
 
-        return back()->with('success', 'Membership successfully updated.');
-     }
+    // Update points and membership rank
+    $points = $this->calculatePoints($newRank);
+    $data->rank = $newRank;
+    $data->points = $points;
+    $newRankName = $data->getRankName($newRank);
+
+    // Save rank history and membership expiry
+    $rankHistory = $data->rank_history ?? [];
+    $membershipExpiry = Carbon::now()->addYear();
+    $data->membership_expiry = $membershipExpiry;
+    $rankHistory[] = [
+        'rank' => $newRank,
+        'rank_name' => $newRankName,
+        'updated_at' => now()
+    ];
+    $data->rank_history = $rankHistory;
+    $data->save();
+
+    // Log the update
+    Log::info('Membership updated successfully.', ['id' => $id, 'new_rank' => $newRank]);
+
+    // Send confirmation email using PHPMailer
+    MailHelper::sendMembershipUpdateMail($data->email, $data->name, $newRankName);
+
+    return back()->with('success', 'Membership successfully updated and email sent.');
+}
 
 // You can define a function to calculate points based on rank here
 private function calculatePoints($rank)
