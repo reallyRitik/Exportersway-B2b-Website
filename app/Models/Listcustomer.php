@@ -43,4 +43,5 @@ class Listcustomer extends Model
         return $this->belongsTo(Listcustomer::class, 'user_id');
     }
    
+    
 }
